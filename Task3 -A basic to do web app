@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>To-Do App</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+    }
+    
+    .container {
+      max-width: 500px;
+      margin: 50px auto;
+      background-color: #f5f5f5;
+      padding: 20px;
+      border-radius: 5px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    
+    h1 {
+      text-align: center;
+    }
+    
+    .input-group {
+      margin-bottom: 10px;
+    }
+    
+    .input-group input {
+      width: 100%;
+      padding: 5px;
+      font-size: 16px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+    
+    .task-list {
+      list-style-type: none;
+      padding: 0;
+    }
+    
+    .task-list li {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: #fff;
+      padding: 10px;
+      border-radius: 5px;
+      margin-bottom: 10px;
+    }
+    
+    .task-list li.completed {
+      background-color: #e1f7d5;
+      text-decoration: line-through;
+    }
+    
+    .task-list li .actions {
+      display: flex;
+      gap: 10px;
+    }
+    
+    .task-list li .actions button {
+      padding: 5px 10px;
+      font-size: 14px;
+      border-radius: 5px;
+      border: none;
+      cursor: pointer;
+    }
+    
+    .task-list li .actions button.delete {
+      background-color: #f44336;
+      color: #fff;
+    }
+    
+    .task-list li .actions button.edit {
+      background-color: #4caf50;
+      color: #fff;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>To-Do App</h1>
+    
+    <div class="input-group">
+      <input type="text" id="taskInput" placeholder="Add new task">
+      <button onclick="addTask()">Add Task</button>
+    </div>
+    
+    <h2>Pending Tasks</h2>
+    <ul id="pendingTasks" class="task-list"></ul>
+    
+    <h2>Completed Tasks</h2>
+    <ul id="completedTasks" class="task-list"></ul>
+  </div>
+
+  <script>
+    // Store tasks in an array
+    let tasks = [];
+
+    // Add a new task
+    function addTask() {
+      const taskInput = document.getElementById("taskInput");
+      const taskText = taskInput.value.trim();
+      
+      if (taskText !== "") {
+        const task = {
+          text: taskText,
+          completed: false,
+          dateAdded: new Date()
+        };
+        
+        tasks.push(task);
+        
+        renderTasks();
+        taskInput.value = "";
+      }
+    }
+
+    // Render tasks on the page
+    function renderTasks() {
+      const pendingTasksList = document.getElementById("pendingTasks");
+      const completedTasksList = document.getElementById("completedTasks");
+      
+      // Clear existing lists
+      pendingTasksList.innerHTML = "";
+      completedTasksList.innerHTML = "";
+      
+      tasks.forEach((task, index) => {
+        const listItem = document.createElement("li");
+        listItem.innerText = task.text;
+        
+        if (task.completed) {
+          listItem.classList.add("completed");
+          completedTasksList.appendChild(listItem);
+        } else {
+          const actions = document.createElement("div");
+          actions.classList.add("actions");
+          
+          const completeButton = document.createElement("button");
+          completeButton.innerText = "Complete";
+          completeButton.addEventListener("click", () => completeTask(index));
+          actions.appendChild(completeButton);
+          
+          const editButton = document.createElement("button");
+          editButton.innerText = "Edit";
+          editButton.addEventListener("click", () => editTask(index));
+          actions.appendChild(editButton);
+          
+          const deleteButton = document.createElement("button");
+          deleteButton.innerText = "Delete";
+          deleteButton.addEventListener("click", () => deleteTask(index));
+          deleteButton.classList.add("delete");
+          actions.appendChild(deleteButton);
+          
+          listItem.appendChild(actions);
+          pendingTasksList.appendChild(listItem);
+        }
+      });
+    }
+
+    // Complete a task
+    function completeTask(index) {
+      tasks[index].completed = true;
+      renderTasks();
+    }
+
+    // Edit a task
+    function editTask(index) {
+      const newTaskText = prompt("Enter new task text:");
+      
+      if (newTaskText !== null && newTaskText.trim() !== "") {
+        tasks[index].text = newTaskText.trim();
+        renderTasks();
+      }
+    }
+
+    // Delete a task
+    function deleteTask(index) {
+      tasks.splice(index, 1);
+      renderTasks();
+    }
+  </script>
+</body>
+</html>
